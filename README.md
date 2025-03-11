@@ -1,40 +1,40 @@
-# Jampp MCP 服务器
+# Jampp MCP Server
 
-这是一个 Model Context Protocol (MCP) 服务器，用于连接 Jampp 广告平台的报告 API。它允许 LLM（如 Claude）通过自然语言查询和分析 Jampp 广告数据。
+This is a Model Context Protocol (MCP) server for connecting to the Jampp advertising platform's reporting API. It allows LLMs (like Claude) to query and analyze Jampp advertising data using natural language.
 
-## 功能
+## Features
 
-该服务器提供以下工具：
+This server provides the following tools:
 
-1. `get_campaign_spend` - 获取特定日期范围内的广告系列支出
-2. `get_campaign_daily_spend` - 获取特定广告系列的每日支出
-3. `get_campaign_performance` - 获取广告系列的综合性能指标
-4. `create_async_report` - 为大型数据集创建异步报告
-5. `get_async_report_status` - 检查异步报告的状态
-6. `get_async_report_results` - 获取已完成的异步报告结果
-7. `get_available_metrics_and_dimensions` - 获取所有可用的指标和维度列表
+1. `get_campaign_spend` - Get campaign spend for a specific date range
+2. `get_campaign_daily_spend` - Get daily spend for a specific campaign
+3. `get_campaign_performance` - Get comprehensive performance metrics for campaigns
+4. `create_async_report` - Create asynchronous reports for large datasets
+5. `get_async_report_status` - Check the status of asynchronous reports
+6. `get_async_report_results` - Get results of completed asynchronous reports
+7. `get_available_metrics_and_dimensions` - Get a list of all available metrics and dimensions
 
-## 安装
+## Installation
 
-1. 克隆此仓库
-2. 安装依赖：`npm install`
-3. 创建 `.env` 文件并添加你的 Jampp API 凭证：
+1. Clone this repository
+2. Install dependencies: `npm install`
+3. Create a `.env` file and add your Jampp API credentials:
    ```
    JAMPP_CLIENT_ID=your_client_id
    JAMPP_CLIENT_SECRET=your_client_secret
    ```
-4. 构建项目：`npm run build`
-5. 运行服务器：`npm start`
+4. Build the project: `npm run build`
+5. Run the server: `npm start`
 
-## 与 Claude for Desktop 集成
+## Integration with Claude for Desktop
 
-要将此服务器与 Claude for Desktop 一起使用：
+To use this server with Claude for Desktop:
 
-1. 确保你已安装并更新到最新版本的 Claude for Desktop。
-2. 打开 Claude for Desktop 配置文件：
+1. Make sure you have installed and updated to the latest version of Claude for Desktop.
+2. Open the Claude for Desktop configuration file:
    - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
    - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-3. 添加 Jampp MCP 服务器到配置中：
+3. Add the Jampp MCP server to the configuration:
 
 ```json
 {
@@ -51,21 +51,21 @@
 }
 ```
 
-4. 保存文件并重启 Claude for Desktop。
-5. 现在你应该能在 Claude for Desktop 中看到 Jampp 工具。
+4. Save the file and restart Claude for Desktop.
+5. You should now see the Jampp tools in Claude for Desktop.
 
-## 示例查询
+## Example Queries
 
-以下是一些你可以在连接 MCP 服务器后向 Claude 提出的示例查询：
+Here are some example queries you can ask Claude after connecting the MCP server:
 
-1. "上个月所有广告系列的总支出是多少？"
-2. "显示过去一周广告系列 ID 12345 的每日支出。"
-3. "1 月份我们的 iOS 广告系列的性能指标是什么？"
-4. "为 Q1 的按国家划分的展示次数和点击次数创建异步报告。"
-5. "检查 ID 为 'abc123' 的异步报告的状态。"
-6. "获取 ID 为 'abc123' 的已完成异步报告的结果。"
-7. "Jampp 报告有哪些可用的指标和维度？"
+1. "What was the total spend across all campaigns last month?"
+2. "Show me the daily spend for campaign ID 12345 over the past week."
+3. "What were the performance metrics for our iOS campaigns in January?"
+4. "Create an async report for impressions and clicks by country for Q1."
+5. "Check the status of the async report with ID 'abc123'."
+6. "Get the results of the completed async report with ID 'abc123'."
+7. "What metrics and dimensions are available for Jampp reporting?"
 
-## 许可证
+## License
 
 MIT
