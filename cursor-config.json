@@ -1,0 +1,60 @@
+{
+  "mcps": [
+    {
+      "name": "Jampp MCP",
+      "description": "Jampp Marketing Campaign Platform API integration",
+      "command": "/Users/steven/.nvm/versions/node/v22.14.0/bin/node",
+      "args": ["/Users/steven/Workspace/mcp_servers/jampp-mcp/build/index.js"],
+      "tools": [
+        {
+          "name": "get_alerts",
+          "description": "Get weather alerts for a state"
+        },
+        {
+          "name": "get_forecast",
+          "description": "Get weather forecast for a location"
+        },
+        {
+          "name": "get_time",
+          "description": "Returns the current local time and timezone information from the current client"
+        },
+        {
+          "name": "get_utc",
+          "description": "Returns accurate UTC time from an NTP server"
+        },
+        {
+          "name": "fetch",
+          "description": "Fetches a URL from the internet and optionally extracts its contents as markdown"
+        },
+        {
+          "name": "get_campaign_spend",
+          "description": "Get spend per campaign for a specific date range"
+        },
+        {
+          "name": "get_campaign_daily_spend",
+          "description": "Get daily spend for a specific campaign"
+        },
+        {
+          "name": "get_campaign_performance",
+          "description": "Get comprehensive performance metrics for campaigns"
+        },
+        {
+          "name": "create_async_report",
+          "description": "Create an asynchronous report for larger data sets"
+        },
+        {
+          "name": "get_async_report_status",
+          "description": "Check the status of an asynchronous report"
+        },
+        {
+          "name": "get_async_report_results",
+          "description": "Get the results of a completed asynchronous report"
+        },
+        {
+          "name": "get_available_metrics_and_dimensions",
+          "description": "Get a list of all available metrics and dimensions for reporting"
+        }
+      ]
+    }
+  ]
+}
