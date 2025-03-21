@@ -2,12 +2,12 @@
   "name": "jampp-mcp",
   "version": "1.0.0",
   "description": "MCP server for Jampp API",
-  "main": "build/index.js",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node build/index.js",
-    "dev": "tsc && node build/index.js"
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js"
   },
   "keywords": [
     "mcp",
