@@ -4,42 +4,38 @@ import { z } from "zod";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 
-// 加载环境变量
 dotenv.config();
 
-// 创建 MCP 服务器
 const server = new McpServer({
   name: "Jampp MCP Server",
   version: "1.0.0"
 });
 
-// Jampp API 常量
 const AUTH_URL = "https://auth.jampp.com/v1/oauth/token";
 const API_URL = "https://reporting-api.jampp.com/v1/graphql";
 
-// 环境变量中的认证信息
 const CLIENT_ID = process.env.JAMPP_CLIENT_ID || '';
 const CLIENT_SECRET = process.env.JAMPP_CLIENT_SECRET || '';
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
-  console.error("缺少 Jampp API 凭证。请设置 JAMPP_CLIENT_ID 和 JAMPP_CLIENT_SECRET 环境变量。");
+  console.error("Missing Jampp API credentials. Please set JAMPP_CLIENT_ID and JAMPP_CLIENT_SECRET environment variables.");
   process.exit(1);
 }
 
-// Token 缓存
+// Token cache
 let accessToken: string | null = null;
 let tokenExpiry = 0;
 
 /**
- * 获取有效的 Jampp API 访问令牌
+ * Get valid Jampp API access token
  */
 async function getAccessToken(): Promise<string> {
-  // 检查是否有有效的令牌
+  // Check if we have a valid token
   if (accessToken && Date.now() < tokenExpiry) {
     return accessToken;
   }
 
-  // 请求新令牌
+  // Request new token
   const params = new URLSearchParams();
   params.append('grant_type', 'client_credentials');
   params.append('client_id', CLIENT_ID);
@@ -54,24 +50,24 @@ async function getAccessToken(): Promise<string> {
   });
 
   if (!response.ok) {
-    throw new Error(`认证失败: ${response.statusText}`);
+    throw new Error(`Authentication failed: ${response.statusText}`);
   }
 
   const data = await response.json();
   accessToken = data.access_token;
 
-  // 设置过期时间，留出 5 分钟的缓冲
+  // Set expiry time with 5 minutes buffer
   tokenExpiry = Date.now() + (data.expires_in - 300) * 1000;
 
   if (!accessToken) {
-    throw new Error('获取访问令牌失败：令牌为空');
+    throw new Error('Failed to get access token: Token is empty');
   }
 
   return accessToken;
 }
 
 /**
- * 执行 GraphQL 查询
+ * Execute GraphQL query
  */
 async function executeQuery(query: string, variables: Record<string, any> = {}) {
   const token = await getAccessToken();
@@ -89,17 +85,17 @@ async function executeQuery(query: string, variables: Record<string, any> = {}) 
   });
 
   if (!response.ok) {
-    throw new Error(`API 请求失败: ${response.statusText}`);
+    throw new Error(`API request failed: ${response.statusText}`);
   }
 
   return response.json();
 }
 
-// 工具: 获取广告系列支出
+// Tool: Get campaign spend
 server.tool("get_campaign_spend", {
-  from_date: z.string().describe("开始日期，格式为 YYYY-MM-DD"),
-  to_date: z.string().describe("结束日期，格式为 YYYY-MM-DD"),
-  campaign_id: z.number().optional().describe("可选的广告系列 ID"),
+  from_date: z.string().describe("Start date in YYYY-MM-DD format"),
+  to_date: z.string().describe("End date in YYYY-MM-DD format"),
+  campaign_id: z.number().optional().describe("Optional campaign ID"),
 }, async ({ from_date, to_date, campaign_id }) => {
   try {
     let query = `
@@ -142,7 +138,7 @@ server.tool("get_campaign_spend", {
       content: [
         {
           type: "text",
-          text: `获取广告系列支出时出错: ${error.message}`
+          text: `Error getting campaign spend: ${error.message}`
         }
       ],
       isError: true
@@ -150,11 +146,11 @@ server.tool("get_campaign_spend", {
   }
 });
 
-// 工具: 获取广告系列每日支出
+// Tool: Get campaign daily spend
 server.tool("get_campaign_daily_spend", {
-  campaign_id: z.number().describe("广告系列 ID"),
-  from_date: z.string().describe("开始日期，格式为 YYYY-MM-DD"),
-  to_date: z.string().describe("结束日期，格式为 YYYY-MM-DD"),
+  campaign_id: z.number().describe("Campaign ID"),
+  from_date: z.string().describe("Start date in YYYY-MM-DD format"),
+  to_date: z.string().describe("End date in YYYY-MM-DD format"),
 }, async ({ campaign_id, from_date, to_date }) => {
   try {
     const query = `
@@ -194,7 +190,7 @@ server.tool("get_campaign_daily_spend", {
       content: [
         {
           type: "text",
-          text: `获取广告系列每日支出时出错: ${error.message}`
+          text: `Error getting campaign daily spend: ${error.message}`
         }
       ],
       isError: true
@@ -202,11 +198,11 @@ server.tool("get_campaign_daily_spend", {
   }
 });
 
-// 工具: 获取广告系列性能指标
+// Tool: Get campaign performance metrics
 server.tool("get_campaign_performance", {
-  from_date: z.string().describe("开始日期，格式为 YYYY-MM-DD"),
-  to_date: z.string().describe("结束日期，格式为 YYYY-MM-DD"),
-  campaign_id: z.number().optional().describe("可选的广告系列 ID"),
+  from_date: z.string().describe("Start date in YYYY-MM-DD format"),
+  to_date: z.string().describe("End date in YYYY-MM-DD format"),
+  campaign_id: z.number().optional().describe("Optional campaign ID"),
 }, async ({ from_date, to_date, campaign_id }) => {
   try {
     let query = `
@@ -255,7 +251,7 @@ server.tool("get_campaign_performance", {
       content: [
         {
           type: "text",
-          text: `获取广告系列性能指标时出错: ${error.message}`
+          text: `Error getting campaign performance metrics: ${error.message}`
         }
       ],
       isError: true
@@ -263,13 +259,13 @@ server.tool("get_campaign_performance", {
   }
 });
 
-// 工具: 创建异步报告
+// Tool: Create async report
 server.tool("create_async_report", {
-  from_date: z.string().describe("开始日期，格式为 YYYY-MM-DD"),
-  to_date: z.string().describe("结束日期，格式为 YYYY-MM-DD"),
-  metrics: z.array(z.string()).describe("要包含的指标列表"),
-  dimensions: z.array(z.string()).describe("要包含的维度列表"),
-  filters: z.record(z.any()).optional().describe("可选的过滤条件"),
+  from_date: z.string().describe("Start date in YYYY-MM-DD format"),
+  to_date: z.string().describe("End date in YYYY-MM-DD format"),
+  metrics: z.array(z.string()).describe("List of metrics to include"),
+  dimensions: z.array(z.string()).describe("List of dimensions to include"),
+  filters: z.record(z.any()).optional().describe("Optional filters"),
 }, async ({ from_date, to_date, metrics, dimensions, filters }) => {
   try {
     const query = `
@@ -306,7 +302,7 @@ server.tool("create_async_report", {
       content: [
         {
           type: "text",
-          text: `创建异步报告时出错: ${error.message}`
+          text: `Error creating async report: ${error.message}`
         }
       ],
       isError: true
@@ -314,9 +310,9 @@ server.tool("create_async_report", {
   }
 });
 
-// 工具: 获取异步报告状态
+// Tool: Get async report status
 server.tool("get_async_report_status", {
-  report_id: z.string().describe("报告 ID"),
+  report_id: z.string().describe("Report ID"),
 }, async ({ report_id }) => {
   try {
     const query = `
@@ -349,7 +345,7 @@ server.tool("get_async_report_status", {
       content: [
         {
           type: "text",
-          text: `获取异步报告状态时出错: ${error.message}`
+          text: `Error getting async report status: ${error.message}`
         }
       ],
       isError: true
@@ -357,9 +353,9 @@ server.tool("get_async_report_status", {
   }
 });
 
-// 工具: 获取异步报告结果
+// Tool: Get async report results
 server.tool("get_async_report_results", {
-  report_id: z.string().describe("报告 ID"),
+  report_id: z.string().describe("Report ID"),
 }, async ({ report_id }) => {
   try {
     const query = `
@@ -383,7 +379,7 @@ server.tool("get_async_report_results", {
         content: [
           {
             type: "text",
-            text: `报告尚未完成，当前状态: ${data.data.report.status}`
+            text: `Report not completed yet, current status: ${data.data.report.status}`
           }
         ]
       };
@@ -402,7 +398,7 @@ server.tool("get_async_report_results", {
       content: [
         {
           type: "text",
-          text: `获取异步报告结果时出错: ${error.message}`
+          text: `Error getting async report results: ${error.message}`
         }
       ],
       isError: true
@@ -410,7 +406,7 @@ server.tool("get_async_report_results", {
   }
 });
 
-// 工具: 获取可用的指标和维度
+// Tool: Get available metrics and dimensions
 server.tool("get_available_metrics_and_dimensions", {}, async () => {
   try {
     const query = `
@@ -440,7 +436,7 @@ server.tool("get_available_metrics_and_dimensions", {}, async () => {
       content: [
         {
           type: "text",
-          text: `获取可用指标和维度时出错: ${error.message}`
+          text: `Error getting available metrics and dimensions: ${error.message}`
         }
       ],
       isError: true
@@ -448,16 +444,16 @@ server.tool("get_available_metrics_and_dimensions", {}, async () => {
   }
 });
 
-// 启动服务器
+// Start the server
 async function main() {
   try {
-    // 使用 stdio 传输启动服务器
+    // Start server with stdio transport
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.error("Jampp MCP 服务器成功启动");
+    console.error("Jampp MCP Server started successfully");
   }
   catch (error) {
-    console.error("启动服务器失败:", error);
+    console.error("Failed to start server:", error);
     process.exit(1);
   }
 }
